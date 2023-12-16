@@ -1,13 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from 'axios'
+// import { MenuItem, Sidebar } from "react-pro-sidebar";
+import MenuItem from '@mui/material/MenuItem';
 
-import { Sidebar } from "react-pro-sidebar";
 
-import { Button, Img, Line, List, Text } from "components";
+import { Button, Img, Input, Line, List, Text } from "components";
 import AddStudentGeneralColumn from "components/AddStudentGeneralColumn";
 import SelectedStudentGeneralColumnvisolearn from "components/SelectedStudentGeneralColumnvisolearn";
 import Sidebar1 from "components/Sidebar1";
+import { Navigate, useNavigate } from "react-router-dom";
+import { Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, Select, TextField } from "@mui/material";
 
 const AddStudentGeneralPage = () => {
+
+  const [data,setData]=useState({})
+  const navigate = useNavigate();
+
+function handleChange(e){
+  console.log(e)
+  const newData={...data}
+  newData[e.target.id?e.target.id:e.target.name]=e.target.value?e.target.value:e.target.name
+  setData(newData)
+  console.log(newData)
+ 
+}
+
+function saveData(){
+  axios.post("/student/",{
+    
+    studentData :data
+    
+  }
+    ).then((res)=>{
+      console.log(res)
+    })
+}
   return (
     <>
       <div className="bg-indigo-50 flex flex-col font-alfaslabone items-center justify-start mx-auto w-full">
@@ -25,12 +52,16 @@ const AddStudentGeneralPage = () => {
                     >
                       General
                     </Text>
-                    <Text
-                      className="text-base text-gray-600"
-                      size="txtIBMPlexSansRegular16"
+                    <div style={{cursor:"pointer"}}> 
+                    <Text 
+
+                        onClick={() => navigate("/documentsone")}
+                        className="md:ml-[0] ml-[41px] text-base text-gray-900"
+                      size="txtIBMPlexSansMedium16"
                     >
                       Documents
                     </Text>
+                    </div>
                     <Text
                       className="text-base text-gray-600"
                       size="txtIBMPlexSansRegular16"
@@ -68,9 +99,9 @@ const AddStudentGeneralPage = () => {
                   </div>
                   <div className="flex md:flex-col flex-row md:gap-10 items-center justify-between mt-[31px] w-full">
                     <div className="bg-indigo-50 flex flex-col h-[100px] items-center justify-start p-5 rounded-[5px] w-[100px]">
-                      <Img
+                      <image
                         className="h-[60px] w-[60px]"
-                        src="images/img_phuserthin.svg"
+                        src={data.image?data.image:"images/img_phuserthin.svg"}
                         alt="phuserthin"
                       />
                     </div>
@@ -81,63 +112,39 @@ const AddStudentGeneralPage = () => {
                           backgroundImage: "url('images/img_group23.svg')",
                         }}
                       >
-                        <Img
+                                         
+<label><Img
                           className="h-5 mr-2.5 w-5"
                           src="images/img_upload.svg"
                           alt="upload"
-                        />
+                        />    
+  <input type="file"  style={{display:"none"}} name="image" id="image" onChange={handleChange} accept="image/png, image/gif, image/jpeg" />
+</label>
                       </div>
-                      <Text
-                        className="absolute left-[7%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansRegular14Gray800"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Image{" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                          *
-                        </span>
-                      </Text>
                     </div>
                     <List
                       className="md:flex-1 sm:flex-col flex-row gap-[17px] grid md:grid-cols-1 grid-cols-2 w-[67%] md:w-full"
                       orientation="horizontal"
                     >
                       <div className="md:h-[42px] h-[50px] relative w-full">
-                        <Img
-                          className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                          src="images/img_group23.svg"
-                          alt="rectangleFour"
-                        />
-                        <Text
-                          className="absolute left-[4%] text-blue_gray-600 text-sm top-[0]"
-                          size="txtIBMPlexSansRegular14Bluegray600"
-                        >
-                          <span className="text-blue_gray-600 font-ibmplexsans text-left font-normal">
-                            Admission Number{" "}
-                          </span>
-                          <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                            *
-                          </span>
-                        </Text>
+                      <TextField 
+                      required
+                     fullWidth={true}
+                     onChange={handleChange}
+                     label={"Admission No"}
+                     id='admissionNo'
+                     value={data.admissionNo}
+                     />
                       </div>
                       <div className="md:h-[42px] h-[50px] relative w-full">
-                        <Img
-                          className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                          src="images/img_group23.svg"
-                          alt="rectangleFour"
-                        />
-                        <Text
-                          className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                          size="txtIBMPlexSansRegular14Gray800"
-                        >
-                          <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                            Grade - Class{" "}
-                          </span>
-                          <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                            *
-                          </span>
-                        </Text>
+                         <TextField 
+                         required
+                     fullWidth={true}
+                     onChange={handleChange}
+                     label={"Grade -Class"}
+                     id='grade'
+                     value={data.grade}
+                     />
                       </div>
                     </List>
                   </div>
@@ -150,376 +157,230 @@ const AddStudentGeneralPage = () => {
                         >
                           |
                         </Text>
-                        <Img
-                          className="absolute h-[42px] inset-[0] justify-center m-auto rounded-[3px]"
-                          src="images/img_rectangle4.svg"
-                          alt="rectangleFour"
-                        />
+                       
                       </div>
-                      <Text
-                        className="absolute left-[4%] text-gray-500_02 text-sm top-[0]"
-                        size="txtInterSemiBold14"
-                      >
-                        <span className="text-indigo-A400 font-ibmplexsans text-left font-semibold">
-                          Name With Initials
-                        </span>
-                        <span className="text-gray-500_02 font-ibmplexsans text-left font-semibold">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-semibold">
-                          *
-                        </span>
-                      </Text>
-                    </div>
-                    <div className="font-ibmplexsans h-12 md:h-[42px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansSemiBold14"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Name Identified By Initials{" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                          *
-                        </span>
-                      </Text>
+                      <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     required
+                     fullWidth={true}
+                     onChange={handleChange}
+                     label={"Name With Initials"}
+                     id='nameWithInitials'
+                     value={data.nameWithInitials}
+                     />
+                    
+                   </div>
                     </div>
                     <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
+                     
+                      <TextField 
+                      required
+                                           fullWidth={true}
+
+                      onChange={handleChange}
+                      label={"Name Identified By Initials"}
+                      id='nameIdentifiedByInitials'
+                      value={data.nameIdentifiedByInitials}
                       />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansSemiBold14"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Full Name{" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                          *
-                        </span>
-                      </Text>
+                     
                     </div>
                     <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
+                     
+                      <TextField 
+                      required
+                      fullWidth={true}
+
+                      onChange={handleChange}
+                      label={"Full Name"}
+                      id='fullName'
+                      value={data.fullName}
                       />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansRegular14Gray800"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Permanent Address
-                        </span>
-                        <span className="text-gray-800 font-ibmplexsans text-left font-bold">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-bold">
-                          *
-                        </span>
-                      </Text>
+                     
                     </div>
                     <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansSemiBold14"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Name of Grama Niladhari’s Division{" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                          *
-                        </span>
-                      </Text>
-                    </div>
+                     
+                     <TextField 
+                     required
+                     onChange={handleChange}
+                     fullWidth={true}
+
+                     label={"Permanent Adress"}
+                     id='permanentAdress'
+                     value={data.permanentAdress}
+                     />
+                    
+                   </div>
+                   <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     required
+                     onChange={handleChange}
+                     fullWidth={true}
+
+                     label={"Name of Grama Niladhari’s Division "}
+                     id='GSName'
+                     value={data.GSName}
+                     />
+                    
+                   </div> <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     required
+                     onChange={handleChange}
+                     fullWidth={true}
+
+                     label={"Division Number"}
+                     id='divisionNo'
+                     value={data.divisionNo}
+                     />
+                    
+                   </div> <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     required
+                     onChange={handleChange}
+                     fullWidth={true}
+
+                     label={"Divisional Secretariat"}
+                     id='divisionalSecretariat'
+                     value={data.divisionalSecretariat}
+                     />
+                    
+                   </div> <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     required
+                     onChange={handleChange}
+                     fullWidth={true}
+                     label={"Residential Address "}
+                     id='residentialAddress'
+                     value={data.residentialAddress}
+                     />
+                    
+                   </div>
                     <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansSemiBold14"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Division Number{" "}
-                        </span>
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                          *
-                        </span>
-                      </Text>
-                    </div>
-                    <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansRegular14Gray800"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Divisional Secretariat
-                        </span>
-                        <span className="text-gray-800 font-ibmplexsans text-left font-bold">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-bold">
-                          *
-                        </span>
-                      </Text>
-                    </div>
-                    <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansSemiBold14"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Residential Address{" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                          *
-                        </span>
-                      </Text>
-                    </div>
-                    <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansRegular14Gray800"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Email
-                        </span>
-                        <span className="text-gray-800 font-ibmplexsans text-left font-bold">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-bold">
-                          *
-                        </span>
-                      </Text>
-                    </div>
-                    <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansSemiBold14"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          Mobile Number
-                        </span>
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-ibmplexsans text-left font-normal">
-                          *
-                        </span>
-                      </Text>
-                    </div>
-                    <div className="font-ibmplexsans h-12 md:h-[42px] relative w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansRegular14Gray800"
-                      >
-                        Telephone Number{" "}
-                      </Text>
-                    </div>
-                  </div>
-                  <div className="flex md:flex-col flex-row font-ibmplexsans gap-[18px] items-center justify-start mt-8 w-[67%] md:w-full">
-                    <div className="md:h-[42px] h-[50px] relative w-[49%] md:w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansRegular14Gray800"
-                      >
-                        Viber Number
-                      </Text>
-                    </div>
-                    <div className="h-12 md:h-[42px] relative w-[49%] md:w-full">
-                      <Img
-                        className="absolute bottom-[0] h-[42px] inset-x-[0] mx-auto rounded-[3px]"
-                        src="images/img_group23.svg"
-                        alt="rectangleFour_One"
-                      />
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtIBMPlexSansSemiBold14"
-                      >
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          WhatsApp Number
-                        </span>
-                        <span className="text-gray-800 font-ibmplexsans text-left font-normal">
-                          {" "}
-                        </span>
-                      </Text>
-                    </div>
+                     
+                     <TextField 
+                     onChange={handleChange}
+                     fullWidth={true}
+                     label={"Email"}
+                     id='email'
+                     value={data.email}
+                     />
+                    
+                   </div>
+                   <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     onChange={handleChange}
+                     fullWidth={true}
+                     label={"Mobile Number"}
+                     id='mobileNumber'
+                     value={data.permanentAdress}
+                     />
+                    
+                   </div>  <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     onChange={handleChange}
+                     fullWidth={true}
+                     label={"Telephone Number"}
+                     id='telephone'
+                     value={data.telephone}
+                     />
+                    
+                   </div>
+                   <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     onChange={handleChange}
+                     fullWidth={true}
+                     label={"Viber Number"}
+                     id='viberNumber'
+                     value={data.viberNumber}
+                     />
+                    
+                   </div>
+                   <div className="font-ibmplexsans md:h-[42px] h-[50px] relative w-full">
+                     
+                     <TextField 
+                     onChange={handleChange}
+                     fullWidth={true}
+                     label={"Whatsapp Number"}
+                     id='whatsappNumber'
+                     value={data.whatsappNumber}
+                     />
+                    
+                   </div>
+                  
                   </div>
                   <List
                     className="sm:flex-col flex-row font-inter gap-[17px] grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center mt-[70px] w-full"
                     orientation="horizontal"
                   >
                     <div className="flex md:h-10 h-[42px] justify-end relative w-full">
-                      <Text
-                        className="mb-2.5 ml-[15px] mt-auto text-blue_gray-900 text-sm"
-                        size="txtInterRegular14"
-                      >
-                        Is father alive
-                      </Text>
-                      <div
-                        className="absolute bg-cover bg-no-repeat flex flex-col h-full inset-[0] items-end justify-center m-auto p-[5px] rounded-[3px] w-full"
-                        style={{
-                          backgroundImage: "url('images/img_group24.svg')",
-                        }}
-                      >
-                        <Img
-                          className="h-[30px] w-[30px]"
-                          src="images/img_akariconsbox.svg"
-                          alt="akariconsbox"
-                        />
-                      </div>
+                    <FormGroup>
+      <FormControlLabel  labelPlacement="start" fullWidth={true} control={<Checkbox onChange={handleChange} id="isFartherAlive"  />} label="Is Farther Alive" />
+      
+    </FormGroup>
                     </div>
                     <div className="flex md:h-10 h-[42px] justify-end relative w-full">
-                      <Text
-                        className="mb-2.5 ml-[15px] mt-auto text-blue_gray-900 text-sm"
-                        size="txtInterRegular14"
-                      >
-                        Is mother alive
-                      </Text>
-                      <div
-                        className="absolute bg-cover bg-no-repeat flex flex-col h-full inset-[0] items-end justify-center m-auto p-[5px] rounded-[3px] w-full"
-                        style={{
-                          backgroundImage: "url('images/img_group24.svg')",
-                        }}
-                      >
-                        <Img
-                          className="h-[30px] w-[30px]"
-                          src="images/img_akariconsbox.svg"
-                          alt="akariconsbox"
-                        />
-                      </div>
+                    <FormGroup>
+      <FormControlLabel  labelPlacement="start" fullWidth={true} control={<Checkbox onChange={handleChange} id="isMotherAlive"   />} label="Is Mother  Alive" />
+      
+    </FormGroup>
                     </div>
                     <div className="flex md:h-10 h-[42px] justify-end relative w-full">
-                      <Text
-                        className="mb-2.5 ml-[15px] mt-auto text-blue_gray-900 text-sm"
-                        size="txtInterRegular14"
-                      >
-                        Father or mother devoiced
-                      </Text>
-                      <div
-                        className="absolute bg-cover bg-no-repeat flex flex-col h-full inset-[0] items-end justify-center m-auto p-[5px] rounded-[3px] w-full"
-                        style={{
-                          backgroundImage: "url('images/img_group24.svg')",
-                        }}
-                      >
-                        <Img
-                          className="h-[30px] w-[30px]"
-                          src="images/img_akariconsbox.svg"
-                          alt="akariconsbox"
-                        />
-                      </div>
+                    <div className="flex md:h-10 h-[42px] justify-end relative w-full">
+                    <FormGroup>
+      <FormControlLabel  labelPlacement="start" fullWidth={true} control={<Checkbox   onChange={handleChange} id="parentIsDivorced"   />} label="Is Farther and Mother divorced" />
+      
+    </FormGroup>
+                    </div>
                     </div>
                   </List>
                   <div className="flex md:flex-col flex-row font-inter gap-[18px] items-center justify-start mt-[71px] w-[67%] md:w-full">
+                  <FormControl fullWidth>
+  <InputLabel id="demo-simple-select-label">No of Sibllings</InputLabel>
+  <Select
+    labelId="no-of-sibllings"
+    id="noOfSibilings"
+    name="noOfSibilings"
+
+    value={data.noOfSibllings}
+    label="No of Sibllings"
+    onChange={handleChange}
+  >
+    <MenuItem value={10}>one</MenuItem>
+    <MenuItem value={20}>two</MenuItem>
+    <MenuItem value={30}>three</MenuItem>
+  </Select>
+</FormControl>
                     <div className="md:h-10 h-[47px] relative w-[49%] md:w-full">
-                      <div
-                        className="absolute bg-cover bg-no-repeat bottom-[0] flex flex-col h-[42px] inset-x-[0] items-end justify-start mx-auto p-2.5 rounded-[3px] w-full"
-                        style={{
-                          backgroundImage: "url('images/img_group23.svg')",
-                        }}
-                      >
-                        <Img
-                          className="h-5 mr-3 w-5"
-                          src="images/img_arrowdown.svg"
-                          alt="arrowdown"
-                        />
-                      </div>
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtInterSemiBold14Gray800"
-                      >
-                        <span className="text-gray-800 font-inter text-left font-normal">
-                          No of Siblings
-                        </span>
-                        <span className="text-gray-800 font-inter text-left font-semibold">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-inter text-left font-semibold">
-                          *
-                        </span>
-                      </Text>
-                    </div>
-                    <div className="md:h-10 h-[47px] relative w-[49%] md:w-full">
-                      <div
-                        className="absolute bg-cover bg-no-repeat bottom-[0] flex flex-col h-[42px] inset-x-[0] items-end justify-start mx-auto p-2.5 rounded-[3px] w-full"
-                        style={{
-                          backgroundImage: "url('images/img_group23.svg')",
-                        }}
-                      >
-                        <Img
-                          className="h-5 mr-3 w-5"
-                          src="images/img_arrowdown.svg"
-                          alt="arrowdown_One"
-                        />
-                      </div>
-                      <Text
-                        className="absolute left-[4%] text-gray-800 text-sm top-[0]"
-                        size="txtInterSemiBold14Gray800"
-                      >
-                        <span className="text-gray-800 font-inter text-left font-normal">
-                          Studying In Same School{" "}
-                        </span>
-                        <span className="text-gray-800 font-inter text-left font-semibold">
-                          {" "}
-                        </span>
-                        <span className="text-red-400 font-inter text-left font-semibold">
-                          *
-                        </span>
-                      </Text>
+                    <FormControl fullWidth>
+  <InputLabel id="demo-simple-select-label">No of Sibllings studying in same school</InputLabel>
+  <Select
+    labelId="no-of-sibllings"
+    id="noOfSibilingWhoStudy"
+    name="noOfSibilingWhoStudy"
+
+    value={data.noOfSibllings}
+    label="noOfSibilingWhoStudy"
+    onChange={handleChange}
+  >
+    <MenuItem     id="noOfSibilingWhoStudy"
+ value={1}>one</MenuItem>
+    <MenuItem     id="noOfSibilingWhoStudy"
+ value={2}>two</MenuItem>
+    <MenuItem      id="noOfSibilingWhoStudy"
+value={3}>three</MenuItem>
+  </Select>
+</FormControl>
                     </div>
                   </div>
                 </div>
-                <AddStudentGeneralColumn className="flex flex-col items-center justify-start w-full" />
+                <AddStudentGeneralColumn saveData={saveData}  data={data} className="flex flex-col items-center justify-start w-full" />
               </div>
             </div>
           </div>

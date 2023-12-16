@@ -1,8 +1,21 @@
 import React from "react";
-
+import axios from "axios";
 import { Button, Line } from "components";
 
 const AddStudentGeneralColumn = (props) => {
+
+  // function saveData() {
+  //   console.log("saveData");
+  //   console.log(props);
+  //   // axios.post("/student/",{
+    
+  //   //   studentData :props.data
+      
+  //   // }
+  //   //   ).then((res)=>{
+  //   //     console.log(res)
+  //   //   })
+  // }
   return (
     <>
       <div className={props.className}>
@@ -24,6 +37,7 @@ const AddStudentGeneralColumn = (props) => {
               color="gray_900"
               size="lg"
               variant="fill"
+              onClick={props.saveData}
             >
               {props?.addstudentaction}
             </Button>

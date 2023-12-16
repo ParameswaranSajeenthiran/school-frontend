@@ -99,7 +99,7 @@ const DashboardPage = () => {
                       Staff Details
                     </Text>
                   </div>
-                  <div className="absolute border border-gray-900 border-solid flex flex-col h-full inset-[0] items-start justify-center m-auto p-5 w-full">
+                  <div  onClick={() => navigate("/studentdetails")}className="absolute border border-gray-900 border-solid flex flex-col h-full inset-[0] items-start justify-center m-auto p-5 w-full">
                     <Img
                       className="h-5 md:ml-[0] ml-[15px] w-5"
                       src="images/img_tdesignuser.svg"
