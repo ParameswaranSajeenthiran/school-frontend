@@ -22,11 +22,12 @@ function handleChange(e){
   newData[e.target.id?e.target.id:e.target.name]=e.target.value?e.target.value:e.target.name
   setData(newData)
   console.log(newData)
+  console.log(process.env)
  
 }
 
 function saveData(){
-  axios.post("/student/",{
+  axios.post(process.env.REACT_APP_BASE_URL+ "/student/",{
     
     studentData :data
     
