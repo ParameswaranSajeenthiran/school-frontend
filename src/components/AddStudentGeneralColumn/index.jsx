@@ -1,8 +1,11 @@
 import React from "react";
 import axios from "axios";
 import { Button, Line } from "components";
+import { useNavigate } from "react-router-dom";
 
 const AddStudentGeneralColumn = (props) => {
+//nvaigation
+  const navigate=useNavigate();
 
   // function saveData() {
   //   console.log("saveData");
@@ -28,6 +31,7 @@ const AddStudentGeneralColumn = (props) => {
               color="gray_400"
               size="lg"
               variant="outline"
+              onClick={ () => navigate('/studentdetails')}
             >
               {props?.discardaction}
             </Button>
@@ -50,7 +54,7 @@ const AddStudentGeneralColumn = (props) => {
 
 AddStudentGeneralColumn.defaultProps = {
   discardaction: "Discard",
-  addstudentaction: "Add Student",
+  addstudentaction: "Save",
 };
 
 export default AddStudentGeneralColumn;

@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Sidebar } from "react-pro-sidebar";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 import { Button, Img, Line, Text } from "components";
 import SelectedStudentGeneralColumnvisolearn from "components/SelectedStudentGeneralColumnvisolearn";
 import Sidebar1 from "components/Sidebar1";
+import { getStudentId } from "utils/utiils";
 
 const SelectedStudentGeneralPage = () => {
   const navigate = useNavigate();
+  function fetchStudentData() {
+    console.log("fetchStudentData");
+    axios.get("/student/"+getStudentId()).then((res) => {
+      console.log(res);
+    });
+  }
+
+  useEffect(() => {
+    document.title = "Selected Student General";
+  }, []);
+
 
   return (
     <>

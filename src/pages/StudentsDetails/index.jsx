@@ -1,7 +1,8 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { createColumnHelper } from "@tanstack/react-table";
 import { useRef, useMemo, useState } from "react";
 
@@ -12,6 +13,8 @@ const StudentsDetailsPage = () => {
 
   const [showPopup, setShowPopup] = useState(false);
   const [activeFrame, setActiveFrame] = useState(null);
+
+  const [tableData1, setTableData] = useState([]);
   const [checkboxState, setCheckboxState] = useState({
     frame3Option1: false,
     frame4Option1: false,
@@ -32,7 +35,6 @@ const StudentsDetailsPage = () => {
       [checkboxName]: !checkboxState[checkboxName],
     });
   };
-
   const tableData = React.useRef([
     {
       no: "01",
@@ -106,10 +108,33 @@ const StudentsDetailsPage = () => {
     },
   ]);
   const navigate = useNavigate();
+  function fetchStudents() {
+
+    axios.get(process.env.REACT_APP_BASE_URL+ "/student/").then((res) => {
+    
+    console.log(res.data)
+
+    // let ref =React.useRef(res.data)
+      setTableData(res.data)
+
+       
+
+    }
+  
+    )
+  }
+  
+  
+      useEffect (() => {
+  
+        fetchStudents()
+        
+      }, [])
   const tableColumns = React.useMemo(() => {
     const tableColumnHelper = createColumnHelper();
-    return [
-      tableColumnHelper.accessor("no", {
+
+      return [
+      tableColumnHelper.accessor("id", {
         cell: (info) => (
           <Text
             className="pb-[7px] sm:pl-5 pl-[35px] pt-3.5 text-gray-900 text-sm"
@@ -127,13 +152,13 @@ const StudentsDetailsPage = () => {
           </Text>
         ),
       }),
-      tableColumnHelper.accessor("fullname", {
+      tableColumnHelper.accessor("fullName", {
         cell: (info) => (
           <Text
             className="pb-2 pt-3.5 text-gray-900 text-sm"
             size="txtIBMPlexSansRegular14Gray900"
           >
-            {info?.getValue()}
+            {info?.getValue()? info?.getValue():"N/A" }
           </Text>
         ),
         header: (info) => (
@@ -145,13 +170,13 @@ const StudentsDetailsPage = () => {
           </Text>
         ),
       }),
-      tableColumnHelper.accessor("admissionnumberOne", {
+      tableColumnHelper.accessor("admissionNo", {
         cell: (info) => (
           <Text
             className="pb-2 pt-3.5 text-gray-900 text-sm"
             size="txtIBMPlexSansRegular14Gray900"
           >
-            {info?.getValue()}
+            {info?.getValue()? info?.getValue():"N/A" }
           </Text>
         ),
         header: (info) => (
@@ -163,13 +188,13 @@ const StudentsDetailsPage = () => {
           </Text>
         ),
       }),
-      tableColumnHelper.accessor("gradeclass", {
+      tableColumnHelper.accessor("grade", {
         cell: (info) => (
           <Text
             className="pb-2 pt-3.5 text-gray-900 text-sm"
             size="txtIBMPlexSansRegular14Gray900"
           >
-            {info?.getValue()}
+            {info?.getValue()? info?.getValue():"N/A" }
           </Text>
         ),
         header: (info) => (
@@ -181,13 +206,14 @@ const StudentsDetailsPage = () => {
           </Text>
         ),
       }),
-      tableColumnHelper.accessor("emergencycontacOne", {
+      
+      tableColumnHelper.accessor("telephone", {
         cell: (info) => (
           <Text
             className="pb-1.5 pt-4 text-gray-900 text-sm"
             size="txtIBMPlexSansRegular14Gray900"
           >
-            {info?.getValue()}
+            {info?.getValue()? info?.getValue():"N/A" }
           </Text>
         ),
         header: (info) => (
@@ -199,6 +225,58 @@ const StudentsDetailsPage = () => {
           </Text>
         ),
       }),
+      tableColumnHelper.accessor("id", {
+        cell: (info) => (
+          // <Text
+          //   className="pb-2 pt-3.5 text-gray-900 text-sm"
+          //   size="txtIBMPlexSansRegular14Gray900"
+          // >
+          //   {info?.getValue()? info?.getValue():"N/A" }
+          // </Text>
+
+          <RemoveRedEyeIcon onClick={()=>{
+
+            localStorage.setItem("studentId",info?.getValue())
+            localStorage.setItem("isEdit",false)
+            
+            navigate("/addstudentgeneral")}}/>
+        ),
+        header: (info) => (
+          <Text
+            className="min-w-[223px] py-3.5 text-blue_gray-100_01 text-sm"
+            size="txtIBMPlexSansMedium14"
+          >
+            
+          </Text>
+        ),
+      }),
+      tableColumnHelper.accessor("id", {
+        cell: (info) => (
+          // <Text
+          //   className="pb-2 pt-3.5 text-gray-900 text-sm"
+          //   size="txtIBMPlexSansRegular14Gray900"
+          // >
+          //   {info?.getValue()? info?.getValue():"N/A" }
+          // </Text>
+
+          <ModeEditIcon style={{marginLeft:-150}} onClick={()=>{
+
+            localStorage.setItem("studentId",info?.getValue())
+            localStorage.setItem("isEdit",true)
+            
+            navigate("/addstudentgeneral")}}/>
+        ),
+        header: (info) => (
+          <Text
+            className="min-w-[223px] py-3.5 text-blue_gray-100_01 text-sm"
+            size="txtIBMPlexSansMedium14"
+          >
+            
+          </Text>
+        ),
+      }),
+
+      
     ];
   }, []);
 
@@ -311,7 +389,17 @@ const StudentsDetailsPage = () => {
                     </Text>
                     <Button
                       className="common-pointer cursor-pointer leading-[normal] min-w-[150px] md:ml-[0] ml-[567px] rounded-[18px] text-center text-xs"
-                      onClick={() => navigate("/addstudentgeneral")}
+                      onClick={() => {
+                        
+                    localStorage.setItem("isEdit",true)
+                    localStorage.setItem("studentId",null)
+                    localStorage.setItem("documentId",null)
+
+                    navigate("/addstudentgeneral")
+
+                  }
+
+                    }
                       color="gray_400"
                       size="md"
                       variant="outline"
@@ -322,7 +410,7 @@ const StudentsDetailsPage = () => {
                   <div className="overflow-auto mt-[30px] w-full">
                     <ReactTable
                       columns={tableColumns}
-                      data={tableData.current}
+                      data={tableData1}
                       rowClass={""}
                       headerClass="bg-gray-900"
                     />

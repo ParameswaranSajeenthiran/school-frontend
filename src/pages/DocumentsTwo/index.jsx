@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-
+import axios from "axios";
 import { Button, Img, Line, List, Text } from "components";
 import AddStudentGeneralColumn from "components/AddStudentGeneralColumn";
 import SelectedStudentGeneralColumnvisolearn from "components/SelectedStudentGeneralColumnvisolearn";
@@ -8,16 +8,68 @@ import Sidebar1 from "components/Sidebar1";
 import { useNavigate } from "react-router-dom";
 import { FormControl, InputLabel, Select, TextField } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
+import { getStudentId } from "utils/utiils";
 
 const DocumentsTwoPage = () => {
 
-  
 
   const navigate = useNavigate();
   const [data,setData]=useState({})
   const [olSubjects,setOLSubjects]=useState([])
   const [alSubjects,setALSubjects]=useState([])
 
+function updateDocument(){
+
+  axios.put(process.env.REACT_APP_BASE_URL+ "/document/"+getStudentId(),{
+
+    document :{birthregistryOffice: data.birthregistryOffice,
+      birthCertificateNo:data.birthCertificateNo,
+      grade5ScholarshipIndexNo: data.grade5ScholarshipIndexNo,
+      achievedmarks: data.achievedmarks,
+      studentId:data.studentId
+
+    },
+    olSubjects:data.olSubjects,
+    alSubjects:data.alSubjects,studentId:data.studentId
+    
+  }
+).then((res)=>{
+  console.log(res)
+}
+)
+}
+
+
+
+  function saveData(){
+
+    if(JSON.parse(localStorage.getItem("documentId"))!=null){
+      updateDocument()
+    }else{
+
+    axios.post(process.env.REACT_APP_BASE_URL+ "/document/",{
+      
+      document :{birthregistryOffice: data.birthregistryOffice,
+        birthCertificateNo:data.birthCertificateNo,
+        grade5ScholarshipIndexNo: data.grade5ScholarshipIndexNo,
+        achievedmarks: data.achievedmarks,
+        studentId:data.studentId,
+        id : JSON.parse(localStorage.getItem("documentId"))
+      
+      },
+      olSubjects:data.olSubjects,
+      alSubjects:data.alSubjects,studentId:data.studentId,
+      studentId:getStudentId()
+
+    }
+
+      ).then((res)=>{
+        console.log(res)
+        localStorage.setItem("documentId",JSON.stringify(res.data.id))
+      })
+
+    }
+  }
 
   function handleChange(e){
     console.log(e)
@@ -35,63 +87,146 @@ const DocumentsTwoPage = () => {
     setOLSubjects(newOLSubjects)
     console.log(newOLSubjects)
     const subject={}
-    subject[data.olSubject]=''
-    let newData={}
-    if(data.olSubjects){
-         newData={...data,olSubjects:{...data.olSubjects,...subject}}
+    subject["subject"]=data.olSubject
+    let newData={...data}
+    
+    if(newData.olSubjects){
+      newData.olSubjects.push(subject)
 
     }else{
-         newData={...data,olSubjects:{...subject}}
+         newData={...data,olSubjects:[subject]}
     }
     setData(newData)
 
     console.log(newData)
   }
 
-  function handleChangeOLSubjects(e){
+  function handleChangeOLSubjectsGrades(e){
     console.log(e)
     const newData={...data}
-    newData.olSubjects[e.target.id?e.target.id:e.target.name]=e.target.value?e.target.value:e.target.name
+    let result=newData.olSubjects[e.target.name]
+    result["grade"]=e.target.value
+
+    newData.olSubjects[e.target.name]=result
     setData(newData)
     console.log(newData)
    
   }
+  function handleChangeOLSubjects(e,index){
+    console.log(e)
+    const newData={...data}
+    let result=newData.olSubjects[index]
+    result[e.target.id]=e.target.value
+
+    newData.olSubjects[index]=result
+    setData(newData)
+    console.log(newData)
+   
+  }
+  
 
 
   function addALSubjects(){ 
-      
+  
       const newALSubjects=[...alSubjects]
       newALSubjects.push(data.alSubject)
       setALSubjects(newALSubjects)
       console.log(newALSubjects)
       const subject={}
-      subject[data.alSubject]=''
-      let newData={}
-      if(data.alSubjects){
-          newData={...data,alSubjects:{...data.alSubjects,...subject}}
+      subject["subject"]=data.alSubject
+      let newData={...data}
+      
+      if(newData.alSubjects){
+        newData.alSubjects.push(subject)
   
       }else{
-          newData={...data,alSubjects:{...subject}}
+          newData={...data,alSubjects:[subject]}
       }
       setData(newData)
   
       console.log(newData)
-
-    
   }
-
-  function handleChangeALSubjects(e){
+  function handleChangeALSubjects(e,index){
     console.log(e)
     const newData={...data}
-    newData.alSubjects[e.target.id?e.target.id:e.target.name]=e.target.value?e.target.value:e.target.name
+    let result=newData.alSubjects[index]
+    result[e.target.id]=e.target.value
+
+    newData.alSubjects[index]=result
+    setData(newData)
+    console.log(newData)
+   
+  }
+  
+
+  function handleChangeALSubjectsGrades(e){
+    console.log(e)
+    const newData={...data}
+    let result=newData.alSubjects[e.target.name]
+    result["grade"]=e.target.value
+
+    newData.alSubjects[e.target.name]=result
     setData(newData)
     console.log(newData)
    
   }
 
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
+  
+function getDocument(){
+  axios.get(process.env.REACT_APP_BASE_URL+ "/document/"+getStudentId()).then((res)=>{
+    console.log(res)
+
+    let document=res.data.documents
+    let olSubjects=res.data.olResults
+    let alSubjects=res.data.alResults
+    let newData={...data}
+    newData["birthregistryOffice"]=document.birthregistryOffice
+    newData["birthCertificateNo"]=document.birthCertificateNo
+    newData["grade5ScholarshipIndexNo"]=document.grade5ScholarshipIndexNo
+    newData["achievedmarks"]=document.achievedmarks
+    newData["studentId"]=document.studentId
+    newData["olSubjects"]=olSubjects
+    newData["alSubjects"]=alSubjects
+
+    setALSubjects(alSubjects.map((subject)=>subject.subject))
+    setOLSubjects(olSubjects.map((subject)=>subject.subject))
+    
+    console.log(newData,"newData")
+    setData(newData)
+   
+
+
+    // if(res.data){
+
+    //   setData(res.data.document)
+    //   setOLSubjects(res.data.olSubjects)
+    //   setALSubjects(res.data.alSubjects)
+    // }
   }
+  )
+}
+
+
+  useEffect(()=>{
+
+    if(JSON.parse(localStorage.getItem("documentId")!=null)){
+      getDocument()
+
+
+
+    }else{
+      setData({
+        birthregistryOffice: "",
+        birthCertificateNo:"",
+        grade5ScholarshipIndexNo: "",
+        achievedmarks: "",
+        studentId:getStudentId()
+      })}
+
+
+    
+
+  },[])
 
 
   return (
@@ -168,8 +303,8 @@ const DocumentsTwoPage = () => {
                      onChange={handleChange}
                      fullWidth={true}
                      label={"Birth Certificate Number"}
-                     id='birthCertificateNumber'
-                     value={data.residentialAddress}
+                     id='birthCertificateNo'
+                     value={data.birthCertificateNo}
                      />
                     </div>
                     <div className="font-ibmplexsans h-12 md:h-[42px] relative w-[49%] md:w-full">
@@ -179,7 +314,7 @@ const DocumentsTwoPage = () => {
                      fullWidth={true}
                      label={"Birth Registry Office"}
                      id='birthregistryOffice'
-                     value={data.birthC}
+                     value={data.birthregistryOffice}
                      />
                     </div>
                   </div>
@@ -190,8 +325,8 @@ const DocumentsTwoPage = () => {
                         onChange={handleChange}
                         fullWidth={true}
                         label={"Index NO of Grade 5 Scholarship"}
-                        id='indexNoOIfGrade5Scholarship'
-                        value={data.indexNoOIfGrade5Scholarship}
+                        id='grade5ScholarshipIndexNo'
+                        value={data.grade5ScholarshipIndexNo}
                       />
                     </div>
                     <div className="md:h-[42px] h-[50px] relative w-[49%] md:w-full">
@@ -200,8 +335,8 @@ const DocumentsTwoPage = () => {
                         onChange={handleChange}
                         fullWidth={true}
                         label={"Achieved Marks"}
-                        id='achievedMarks+'
-                        value={data.indexNoOIfGrade5Scholarship}
+                        id='achievedmarks'
+                        value={data.achievedmarks}
                       />
                     </div>
                   </div>
@@ -299,23 +434,16 @@ const DocumentsTwoPage = () => {
 
 
 
-                  {olSubjects.map((subject, index) => {
+                  {olSubjects? olSubjects.map((subject, index) => {
                     return (
 
                       <div className="bg-indigo-50 border-b border-gray-300_01 border-solid flex flex-col font-ibmplexsans items-center justify-start p-[9px] w-[67%] md:w-full">
                         <div className="flex md:flex-col flex-row md:gap-5 items-center justify-start w-[91%] md:w-full">
-                          <TextField sx={{ m: 1, marginLeft: '0px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
-
-
-                          >
-                            5235226246
-                          </TextField>
-                          <TextField sx={{ m: 1, marginLeft: '40px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
-
-
-                          >
-                            5235226246
-                          </TextField>
+                          <TextField  value={data.olSubjects? data.olSubjects[index]["year"]:""} id={"year"} sx={{ m: 1, marginLeft: '0px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
+                          onChange={(e)=>{handleChangeOLSubjects(e,index)}}/>
+                         
+                          <TextField value={data.olSubjects? data.olSubjects[index]["indexNumber"]:""}   id={"indexNumber"}  sx={{ m: 1, marginLeft: '40px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
+                          onChange={(e)=>{handleChangeOLSubjects(e,index)}}/>
                           <Text
                             className="bg-indigo-50 h-[29px] justify-center md:ml-[0] ml-[77px] pl-1 pr-2 py-1 rounded-[3px] text-gray-900 text-sm"
                             size="txtIBMPlexSansRegular14Gray900"
@@ -328,10 +456,10 @@ const DocumentsTwoPage = () => {
                             <Select
                               labelId="OL Subjects"
                               id="olSubject"
-                              name={subject}
-                              value={data.olSubject[subject]}
+                              name={index}
+                              value={data.olSubjects? data.olSubjects[index]["grade"]:""}
                               label=""
-                              onChange={handleChangeOLSubjects}
+                              onChange={handleChangeOLSubjectsGrades}
                             >
                               <MenuItem value={"A"}>A</MenuItem>
                               <MenuItem value={"B"}>B</MenuItem>
@@ -345,7 +473,7 @@ const DocumentsTwoPage = () => {
                       </div>
 
                       ) 
-                    })}
+                    }):null}
                   
 
                    <div className="flex sm:flex-col flex-row gap-[19px] items-end justify-start mt-16 w-[43%] md:w-full">
@@ -442,23 +570,16 @@ const DocumentsTwoPage = () => {
 
 
 
-                  {alSubjects.map((subject, index) => {
+                  { alSubjects? alSubjects.map((subject, index) => {
                     return (
 
                       <div className="bg-indigo-50 border-b border-gray-300_01 border-solid flex flex-col font-ibmplexsans items-center justify-start p-[9px] w-[67%] md:w-full">
                         <div className="flex md:flex-col flex-row md:gap-5 items-center justify-start w-[91%] md:w-full">
-                          <TextField sx={{ m: 1, marginLeft: '0px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
-
-
-                          >
-                            5235226246
-                          </TextField>
-                          <TextField sx={{ m: 1, marginLeft: '40px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
-
-
-                          >
-                            5235226246
-                          </TextField>
+                        <TextField  value={data.alSubjects? data.alSubjects[index]["year"]:""} id={"year"} sx={{ m: 1, marginLeft: '0px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
+                          onChange={(e)=>{handleChangeALSubjects(e,index)}}/>
+                         
+                          <TextField  value={data.alSubjects? data.alSubjects[index]["indexNumber"]:""} id={"indexNumber"}  sx={{ m: 1, marginLeft: '40px', maxWidth: 100, outlineColor: 'white', backgroundColor: 'white' }} size="small"
+                          onChange={(e)=>{handleChangeALSubjects(e,index)}}/>
                           <Text
                             className="bg-indigo-50 h-[29px] justify-center md:ml-[0] ml-[77px] pl-1 pr-2 py-1 rounded-[3px] text-gray-900 text-sm"
                             size="txtIBMPlexSansRegular14Gray900"
@@ -471,10 +592,10 @@ const DocumentsTwoPage = () => {
                             <Select
                               labelId="OL Subjects"
                               id="olSubject"
-                              name={subject}
-                              value={data.alSubjects[subject]}
+                              name={index}
+                              value={data.alSubjects? data.alSubjects[index]["grade"]:""}
                               label=""
-                              onChange={handleChangeALSubjects}
+                              onChange={handleChangeALSubjectsGrades}
                             >
                               <MenuItem value={"A"}>A</MenuItem>
                               <MenuItem value={"B"}>B</MenuItem>
@@ -488,12 +609,12 @@ const DocumentsTwoPage = () => {
                       </div>
 
                       ) 
-                    })}
+                    }):null}
                    
                  
            
                 </div>
-                <AddStudentGeneralColumn className="flex flex-col items-center justify-start w-full" />
+                <AddStudentGeneralColumn  saveData={saveData} className="flex flex-col items-center justify-start w-full" />
               </div>
             </div>
           </div>

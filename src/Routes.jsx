@@ -28,7 +28,7 @@ const ProjectRoutes = () => {
           <Route path="/studentdetails" element={<StudentsDetails />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<StudentsDetails />} />
           <Route
             path="/selectedstudentgeneral"
             element={<SelectedStudentGeneral />}
