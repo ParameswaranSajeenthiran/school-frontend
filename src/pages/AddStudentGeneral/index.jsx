@@ -19,7 +19,7 @@ const AddStudentGeneralPage = () => {
 function handleChange(e){
   console.log(e)
   const newData={...data}
-  newData[e.target.id?e.target.id:e.target.name]=e.target.value?e.target.value:e.target.name
+  newData[e.target.id?e.target.id:e.target.name]=e.target.value
   setData(newData)
   console.log(newData)
   console.log(process.env)
@@ -56,7 +56,7 @@ function saveData(){
                     <div style={{cursor:"pointer"}}> 
                     <Text 
 
-                        onClick={() => navigate("/documentsone")}
+                        onClick={() => navigate("/documentstwo")}
                         className="md:ml-[0] ml-[41px] text-base text-gray-900"
                       size="txtIBMPlexSansMedium16"
                     >
@@ -142,7 +142,7 @@ function saveData(){
                          required
                      fullWidth={true}
                      onChange={handleChange}
-                     label={"Grade -Class"}
+                     label={"Grade "}
                      id='grade'
                      value={data.grade}
                      />
